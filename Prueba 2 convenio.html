@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8" />
+  <title>Convenios — Clínica Portoazul</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://www.clinicaportoazul.com/wp-content/uploads/2020/12/logo-cpa-auna2.png">
+  <script>
+    (function(){
+      var l=document.querySelector("link[rel~='icon']")||document.createElement('link');
+      l.rel='shortcut icon';l.type='image/png';
+      l.href='https://www.clinicaportoazul.com/wp-content/uploads/2020/12/logo-cpa-auna2.png';
+      document.head.appendChild(l);
+    })();
+  </script>
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:          #EEF4F8;
+      --sidebar-bg:  #ffffff;
+      --sidebar-w:   240px;
+      --accent:      #00B0CA;
+      --accent-dark: #0090A8;
+      --lime:        #BED600;
+      --lime-dark:   #A0B400;
+      --surface:     #ffffff;
+      --surface-alt: #F4F8FB;
+      --border:      #E2EDF3;
+      --text:        #1A2B3C;
+      --muted:       #6B8090;
+      --success:     #22C55E;
+      --warning:     #F59E0B;
+      --danger:      #EF4444;
+      --radius:      14px;
+      --shadow:      0 2px 16px rgba(0,130,160,.08);
+      --shadow-md:   0 6px 28px rgba(0,130,160,.13);
+    }
+
+    /* ─── RESET ── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body { height:100%; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── LAYOUT ── */
+    .app { display:flex; height:100vh; }
+
+    /* ─── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      flex-shrink: 0; overflow-y: auto;
+      box-shadow: 2px 0 18px rgba(0,130,160,.07);
+      z-index: 10;
+    }
+    .sidebar-logo { padding:20px 18px 14px; border-bottom:1px solid var(--border); text-align:center; }
+    .sidebar-logo img { width:130px; display:block; margin:0 auto; }
+    .sidebar-brand { background:linear-gradient(135deg,var(--lime) 0%,#d4e800 100%); padding:12px 18px; text-align:center; }
+    .sidebar-brand h1 { font-size:.72rem; font-weight:800; color:#2a3800; letter-spacing:.04em; line-height:1.35; text-transform:uppercase; }
+    .nav-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); padding:20px 20px 8px; }
+    .nav-menu { list-style:none; padding:0 12px 20px; }
+    .nav-item { margin:3px 0; }
+    .nav-link { display:flex; align-items:center; gap:10px; padding:10px 14px; color:var(--muted); text-decoration:none; border-radius:10px; font-size:.84rem; font-weight:600; cursor:pointer; transition:all .18s ease; }
+    .nav-link:hover { background:var(--surface-alt); color:var(--accent); }
+    .nav-link.active { background:linear-gradient(135deg,#E6F7FA 0%,#D0F0F5 100%); color:var(--accent-dark); box-shadow:inset 3px 0 0 var(--accent); }
+    .nav-icon { font-size:1rem; flex-shrink:0; }
+
+    /* ─── MAIN ── */
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .topbar { background:var(--surface); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); flex-shrink:0; position:sticky; top:0; z-index:9; }
+    .topbar-left h2 { font-size:1.3rem; font-weight:800; color:var(--text); letter-spacing:-.02em; }
+    .topbar-left .breadcrumb { font-size:.72rem; color:var(--muted); font-weight:500; margin-top:1px; }
+    .topbar-right { display:flex; align-items:center; gap:12px; }
+    .avatar { width:36px; height:36px; background:linear-gradient(135deg,var(--accent),var(--lime)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; color:#fff; font-size:.8rem; }
+    .topbar-name { font-size:.82rem; font-weight:700; color:var(--text); }
+
+    /* ─── CONTENT ── */
+    .content-scroll { flex:1; overflow-y:auto; padding:24px 28px 40px; }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* ─── CARDS ── */
+    .card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); margin-bottom:20px; overflow:hidden; }
+    .card-header { padding:14px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; background:var(--surface); }
+    .card-header-icon { width:32px; height:32px; background:linear-gradient(135deg,#E0F6FA,#C5EEF5); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.95rem; }
+    .card-header-title { font-size:.9rem; font-weight:700; color:var(--text); }
+    .card-body { padding:20px; }
+
+    /* ─── FORM ── */
+    .form-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:16px; }
+    .form-group { display:flex; flex-direction:column; gap:5px; }
+    .form-group label { font-size:.74rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+    input, select, textarea { font-family:inherit; font-size:.85rem; padding:10px 13px; border:1.5px solid var(--border); border-radius:9px; background:var(--surface-alt); color:var(--text); transition:border .15s,box-shadow .15s; outline:none; }
+    input:focus, select:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(0,176,202,.12); background:#fff; }
+    textarea { resize:vertical; }
+
+    /* ─── BUTTONS ── */
+    .btn { display:inline-flex; align-items:center; gap:7px; padding:9px 18px; border-radius:9px; font-family:inherit; font-size:.82rem; font-weight:700; cursor:pointer; border:none; transition:all .18s ease; white-space:nowrap; }
+    .btn-primary { background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dark) 100%); color:#fff; box-shadow:0 4px 14px rgba(0,176,202,.35); }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(0,176,202,.4); }
+    .btn-lime { background:linear-gradient(135deg,var(--lime) 0%,var(--lime-dark) 100%); color:#2a3800; box-shadow:0 4px 14px rgba(190,214,0,.3); }
+    .btn-lime:hover { transform:translateY(-1px); }
+    .btn-ghost { background:var(--surface-alt); color:var(--muted); border:1.5px solid var(--border); }
+    .btn-ghost:hover { background:var(--border); color:var(--text); }
+    .btn-sm { padding:6px 12px; font-size:.76rem; }
+
+    /* ─── MESSAGE ── */
+    .message { display:none; padding:11px 15px; border-radius:9px; margin-top:14px; font-size:.83rem; font-weight:600; }
+    .message.success { background:#ECFDF5; color:#166534; border:1px solid #BBF7D0; }
+    .message.error   { background:#FFF1F2; color:#991B1B; border:1px solid #FECDD3; }
+
+    /* ─── TOOLBAR ── */
+    .toolbar { display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+    .search-box { display:flex; align-items:center; gap:8px; background:var(--surface-alt); border:1.5px solid var(--border); border-radius:9px; padding:8px 13px; flex:1; min-width:160px; }
+    .search-box span { color:var(--muted); font-size:.9rem; }
+    .search-box input { border:none; background:transparent; padding:0; font-size:.84rem; flex:1; }
+    .search-box input:focus { box-shadow:none; }
+
+    /* ─── TABLE ── */
+    .table-wrap { width:100%; overflow-x:auto; border-radius:10px; border:1px solid var(--border); }
+    .table-wrap-scroll { max-height:500px; overflow-y:auto; }
+    table { width:100%; border-collapse:collapse; background:var(--surface); table-layout:fixed; }
+    thead tr { background:linear-gradient(90deg,var(--accent) 0%,#0098B5 100%); color:#fff; }
+    thead th { padding:11px 14px; font-size:.74rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; position:sticky; top:0; z-index:2; background:var(--accent); }
+    tbody tr { transition:background .12s; border-bottom:1px solid var(--border); }
+    tbody tr:hover { background:#F0F9FB; }
+    tbody td { padding:10px 14px; font-size:.83rem; color:var(--text); }
+
+    /* ─── BADGES ── */
+    .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:20px; font-size:.72rem; font-weight:700; }
+    .estado-vigente { background:#DCFCE7; color:#15803D; }
+    .estado-proximo { background:#FEF3C7; color:#B45309; }
+    .estado-vencida { background:#FFE4E6; color:#B91C1C; }
+    .estado-na      { background:#F1F5F9; color:#64748B; }
+
+    /* ─── CHIPS RESUMEN ── */
+    .resumen-chips { display:flex; gap:10px; flex-wrap:wrap; }
+    .chip { display:flex; align-items:center; gap:7px; padding:7px 14px; border-radius:22px; font-size:.78rem; font-weight:700; }
+    .chip-dot { width:8px; height:8px; border-radius:50%; }
+
+    /* ─── FILTROS POLIZAS ── */
+    .filtros-polizas { position:sticky; top:0; z-index:5; background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:14px 16px; margin-bottom:14px; display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; box-shadow:0 2px 8px rgba(0,130,160,.06); }
+    .filtros-left { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
+    /* ─── DETALLE ── */
+    .detalle-header { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+    .detalle-header h3 { font-size:1rem; font-weight:800; color:var(--text); }
+    .file-preview { width:100%; height:480px; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; background:var(--surface-alt); }
+    .small { font-size:.8rem; color:var(--muted); }
+
+    /* ─── STAT CARDS ── */
+    .stat-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:20px; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); }
+    .stat-card .label { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:4px; }
+    .stat-card .value { font-size:1.5rem; font-weight:800; }
+
+    /* ─── CONTACTOS: chips filtro de hojas ── */
+    .hojas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .hoja-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 18px 12px;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: .84rem;
+      font-weight: 700;
+      color: var(--muted);
+      transition: all .18s ease;
+    }
+    .hoja-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent-dark);
+      background: #E6F7FA;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .hoja-chip.active {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+      border-color: var(--accent-dark);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,176,202,.35);
+      transform: translateY(-2px);
+    }
+    .hoja-chip .hoja-icon { font-size: 1.6rem; }
+    .hoja-chip .hoja-count {
+      font-size: .70rem;
+      font-weight: 600;
+      opacity: .75;
+      margin-top: 2px;
+    }
+
+    /* link en tabla contactos */
+    .contact-link { color:var(--accent); font-weight:600; text-decoration:none; }
+    .contact-link:hover { text-decoration:underline; }
+
+    /* ─── RESPONSIVE ── */
+    @media(max-width:820px){
+      .sidebar { display:none; }
+      body { overflow:auto; }
+      .table-wrap-scroll { max-height:380px; }
+      .hojas-grid { grid-template-columns:repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://www.clinicaportoazul.com/wp-content/uploads/2020/12/logo-cpa-auna2.png" alt="Logo">
+    </div>
+    <div class="sidebar-brand">
+      <h1>Convenio<br>Clínica Portoazul</h1>
+    </div>
+    <div class="nav-label">Menú principal</div>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link active" onclick="showTab('contratos',event)">
+          <span class="nav-icon">📄</span> Contratos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="showTab('consolidado',event)">
+          <span class="nav-icon">📊</span> Consolidado
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="showTab('polizas',event)">
+          <span class="nav-icon">🛡️</span> Gestión de pólizas
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="showTab('contactos',event)">
+          <span class="nav-icon">📞</span> Contacto aseguradoras
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2 id="titulo-seccion">Registro de Empresas</h2>
+        <div class="breadcrumb" id="breadcrumb">Inicio / Contratos</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-name">Administrador</div>
+        <div class="avatar">CP</div>
+      </div>
+    </div>
+
+    <div class="content-scroll">
+
+      <!-- ══ CONTRATOS ══ -->
+      <div id="contratos" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📄</div>
+            <span class="card-header-title">Agregar nueva empresa contratada</span>
+          </div>
+          <div class="card-body">
+            <form id="formEmpresa" class="form-grid" onsubmit="event.preventDefault();guardar();">
+              <div class="form-group"><label>NIT</label><input id="nit" type="text" placeholder="Ej: 900123456-1" required></div>
+              <div class="form-group"><label>Nombre</label><input id="nombre" type="text" placeholder="Razón social" required></div>
+              <div class="form-group">
+                <label>Segmento</label>
+                <select id="segmento" required>
+                  <option value="">— Seleccione —</option>
+                  <option>POLIZA</option><option>MEDICINA PREPAGADA</option><option>MEDICINA PREVENTIVA</option>
+                  <option>ARL</option><option>EPS</option><option>PAC</option><option>IPS</option><option>REGIMENES ESPECIALES</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Plan</label><input id="plan" type="text" placeholder="Nombre del plan" required></div>
+              <div class="form-group"><label>N° Contrato</label><input id="contrato" type="text" placeholder="Número" required></div>
+              <div class="form-group"><label>Fecha inicio</label><input id="fecha" type="date" required></div>
+              <div class="form-group">
+                <label>Tipo de fin</label>
+                <select id="tipoFin" onchange="toggleFechaFin()" required>
+                  <option value="">—</option>
+                  <option>Renovación automática</option>
+                  <option>Fecha específica</option>
+                </select>
+              </div>
+              <div class="form-group" id="fechaFinGroup" style="display:none">
+                <label>Fecha fin</label><input id="fechaFin" type="date">
+              </div>
+              <div style="grid-column:1/-1;display:flex;gap:10px;align-items:center;">
+                <button class="btn btn-primary" type="submit">💾 Guardar empresa</button>
+              </div>
+            </form>
+            <div id="mensaje" class="message"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CONSOLIDADO ══ -->
+      <div id="consolidado" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📊</div>
+            <span class="card-header-title">Consolidado de contratos</span>
+          </div>
+          <div class="card-body">
+            <div class="toolbar">
+              <button class="btn btn-lime btn-sm" onclick="cargarEmpresas()">🔄 Actualizar</button>
+              <div class="search-box">
+                <span>🔍</span>
+                <input id="buscador" type="text" placeholder="Buscar empresa, NIT, segmento…" onkeyup="filtrarTabla()">
+              </div>
+            </div>
+            <div id="consolidado-contratos" class="table-wrap table-wrap-scroll">
+              <table id="tabla-consolidado" aria-label="Consolidado de contratos">
+                <thead>
+                  <tr>
+                    <th style="width:10%">NIT</th>
+                    <th style="width:22%">Nombre</th>
+                    <th style="width:14%">Segmento</th>
+                    <th style="width:16%">Plan</th>
+                    <th style="width:12%">N° Contrato</th>
+                    <th style="width:10%">F. Inicio</th>
+                    <th style="width:10%">F. Fin</th>
+                    <th style="width:6%">Ver</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpoTabla">
+                  <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Sin datos</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DETALLE ══ -->
+      <div id="detalle" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">🔎</div>
+            <span class="card-header-title">Detalle del contrato</span>
+          </div>
+          <div class="card-body" id="detalleContainer">
+            <div class="small">Seleccione un contrato para ver su detalle.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PÓLIZAS ══ -->
+      <div id="polizas" class="tab-content">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="label">Vigentes</div>
+            <div class="value" id="statVigentes" style="color:#15803D">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Próximas a vencer</div>
+            <div class="value" id="statProximas" style="color:#B45309">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Vencidas</div>
+            <div class="value" id="statVencidas" style="color:#B91C1C">0</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">🛡️</div>
+            <span class="card-header-title">Gestión de pólizas</span>
+          </div>
+          <div class="card-body">
+            <div class="filtros-polizas">
+              <div class="filtros-left">
+                <select id="filtroPoliza" onchange="cargarPolizas()"
+                  style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);font-family:inherit;font-size:.83rem;background:var(--surface-alt);">
+                </select>
+                <select id="filtroEstado" onchange="cargarPolizas()"
+                  style="padding:9px 12px;border-radius:9px;border:1.5px solid var(--border);font-family:inherit;font-size:.83rem;background:var(--surface-alt);">
+                  <option value="">TODOS LOS ESTADOS</option>
+                  <option value="Vigente">VIGENTE</option>
+                  <option value="Proxima a vencer">PRÓXIMA A VENCER</option>
+                  <option value="Vencida">VENCIDA</option>
+                </select>
+                <div class="search-box" style="min-width:220px;">
+                  <span>🔍</span>
+                  <input type="text" id="buscadorPolizas" placeholder="Entidad, plan, aseguradora…" onkeyup="cargarPolizas()">
+                </div>
+              </div>
+              <div id="resumenEstados" class="resumen-chips">
+                <div class="chip estado-vigente"><span class="chip-dot" style="background:#15803D"></span>Vigentes: 0</div>
+                <div class="chip estado-proximo"><span class="chip-dot" style="background:#B45309"></span>Próximas: 0</div>
+                <div class="chip estado-vencida"><span class="chip-dot" style="background:#B91C1C"></span>Vencidas: 0</div>
+              </div>
+            </div>
+            <div class="table-wrap table-wrap-scroll">
+              <table id="tabla-polizas">
+                <thead>
+                  <tr>
+                    <th style="width:26%">Nombre</th>
+                    <th style="width:20%">Plan</th>
+                    <th style="width:18%">Aseguradora</th>
+                    <th style="width:14%">Inicio vigencia</th>
+                    <th style="width:14%">Fin vigencia</th>
+                    <th style="width:8%">Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaPolizas">
+                  <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">Seleccione un tipo de póliza</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CONTACTO ASEGURADORAS ══ -->
+      <div id="contactos" class="tab-content">
+
+        <!-- Grid de cuadritos por hoja -->
+        <div class="hojas-grid" id="hojasGrid">
+          <button class="hoja-chip active" onclick="seleccionarHoja('EPS',this)">
+            <span class="hoja-icon">🏥</span>
+            <span>EPS</span>
+            <span class="hoja-count" id="cnt-EPS">— contactos</span>
+          </button>
+          <button class="hoja-chip" onclick="seleccionarHoja('PAP',this)">
+            <span class="hoja-icon">📋</span>
+            <span>PAP</span>
+            <span class="hoja-count" id="cnt-PAP">— contactos</span>
+          </button>
+          <button class="hoja-chip" onclick="seleccionarHoja('FUERZA COMERCIAL',this)">
+            <span class="hoja-icon">💼</span>
+            <span>Fuerza Comercial</span>
+            <span class="hoja-count" id="cnt-FUERZA COMERCIAL">— contactos</span>
+          </button>
+          <button class="hoja-chip" onclick="seleccionarHoja('ARL',this)">
+            <span class="hoja-icon">🦺</span>
+            <span>ARL</span>
+            <span class="hoja-count" id="cnt-ARL">— contactos</span>
+          </button>
+          <button class="hoja-chip" onclick="seleccionarHoja('MOS',this)">
+            <span class="hoja-icon">🏨</span>
+            <span>MOS</span>
+            <span class="hoja-count" id="cnt-MOS">— contactos</span>
+          </button>
+          <button class="hoja-chip" onclick="seleccionarHoja('IPS TRASPLANTE',this)">
+            <span class="hoja-icon">🔬</span>
+            <span>IPS Trasplante</span>
+            <span class="hoja-count" id="cnt-IPS TRASPLANTE">— contactos</span>
+          </button>
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">📞</div>
+            <span class="card-header-title" id="tituloContactos">Contactos — EPS</span>
+          </div>
+          <div class="card-body">
+            <div class="toolbar">
+              <div class="search-box">
+                <span>🔍</span>
+                <input type="text" id="buscadorContactos"
+                  placeholder="Buscar empresa, nombre, cargo, correo…"
+                  onkeyup="filtrarContactos()">
+              </div>
+            </div>
+            <div class="table-wrap table-wrap-scroll">
+              <table id="tabla-contactos">
+                <thead>
+                  <tr>
+                    <th style="width:18%">Empresa</th>
+                    <th style="width:18%">Nombre</th>
+                    <th style="width:14%">Cargo</th>
+                    <th style="width:12%">Teléfono</th>
+                    <th style="width:20%">Correo</th>
+                    <th style="width:18%">Dirección</th>
+                  </tr>
+                </thead>
+                <tbody id="cuerpoContactos">
+                  <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px">⏳ Cargando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /contactos -->
+
+    </div><!-- /content-scroll -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+  // ── TABS ────────────────────────────────────────────────────
+  function showTab(tabName, event) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabName).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const el = event
+      ? (event.target.closest('.nav-link') || event.target)
+      : document.querySelector(`.nav-link[onclick*="${tabName}"]`);
+    if (el) el.classList.add('active');
+    const map = {
+      contratos:   ['Registro de Empresas Contratadas','Inicio / Contratos'],
+      consolidado: ['Consolidado de Contratos','Inicio / Consolidado'],
+      detalle:     ['Detalle del Contrato','Inicio / Consolidado / Detalle'],
+      polizas:     ['Gestión de Pólizas','Inicio / Pólizas'],
+      contactos:   ['Contacto Aseguradoras','Inicio / Contactos'],
+    };
+    if (map[tabName]) {
+      document.getElementById('titulo-seccion').textContent = map[tabName][0];
+      document.getElementById('breadcrumb').textContent = map[tabName][1];
+    }
+    if (tabName === 'consolidado') cargarEmpresas();
+    if (tabName === 'polizas')    cargarTiposPoliza();
+    if (tabName === 'contactos')  iniciarContactos();
+  }
+
+  function toggleFechaFin() {
+    document.getElementById('fechaFinGroup').style.display =
+      document.getElementById('tipoFin').value === 'Fecha específica' ? 'block' : 'none';
+  }
+
+  // ── GUARDAR EMPRESA ─────────────────────────────────────────
+  function guardar() {
+    const datos = {
+      nit:      document.getElementById('nit').value.trim(),
+      nombre:   document.getElementById('nombre').value.trim(),
+      segmento: document.getElementById('segmento').value,
+      plan:     document.getElementById('plan').value.trim(),
+      contrato: document.getElementById('contrato').value.trim(),
+      fecha:    document.getElementById('fecha').value,
+      tipoFin:  document.getElementById('tipoFin').value,
+      fechaFin: document.getElementById('fechaFin').value
+    };
+    const msg = document.getElementById('mensaje');
+    msg.style.display='block'; msg.className='message'; msg.textContent='⏳ Guardando...';
+    if(!datos.nit||!datos.nombre||!datos.segmento||!datos.plan||!datos.contrato||!datos.fecha||!datos.tipoFin){
+      msg.className='message error'; msg.textContent='❌ Complete todos los campos obligatorios.'; return;
+    }
+    if(datos.tipoFin==='Fecha específica'&&!datos.fechaFin){
+      msg.className='message error'; msg.textContent='❌ Seleccione la fecha de fin.'; return;
+    }
+    google.script.run
+      .withSuccessHandler(resp => {
+        msg.className='message success'; msg.textContent=resp||'✅ Empresa registrada correctamente';
+        document.getElementById('formEmpresa').reset();
+        document.getElementById('fechaFinGroup').style.display='none';
+        setTimeout(()=>{ msg.style.display='none'; },3000);
+      })
+      .withFailureHandler(err => {
+        msg.className='message error'; msg.textContent='❌ Error: '+(err&&err.message?err.message:err);
+      })
+      .guardarEmpresa(datos);
+  }
+
+  // ── CONSOLIDADO ─────────────────────────────────────────────
+  function formatFecha(v) {
+    if(!v) return '';
+    const d=new Date(v); return isNaN(d)?v:d.toLocaleDateString('es-CO');
+  }
+
+  function cargarEmpresas() {
+    const cuerpo=document.getElementById('cuerpoTabla');
+    cuerpo.innerHTML="<tr><td colspan='8' style='text-align:center;color:var(--muted);padding:24px'>⏳ Cargando contratos...</td></tr>";
+    google.script.run
+      .withSuccessHandler(empresas => {
+        cuerpo.innerHTML='';
+        if(!empresas||!empresas.length){
+          cuerpo.innerHTML="<tr><td colspan='8' style='text-align:center;color:var(--muted);padding:24px'>No hay contratos registrados.</td></tr>";
+          return;
+        }
+        empresas.forEach(emp => {
+          cuerpo.innerHTML+=`<tr>
+            <td>${emp.nit||''}</td><td>${emp.nombre||''}</td><td>${emp.segmento||''}</td>
+            <td>${emp.plan||''}</td><td>${emp.contrato||''}</td>
+            <td>${formatFecha(emp.fechaInicio)}</td><td>${formatFecha(emp.fechaFin)}</td>
+            <td><button class="btn btn-ghost btn-sm" onclick="verContrato('${escapeHtml(emp.nit)}','${escapeHtml(emp.contrato)}')">🔎 Ver</button></td>
+          </tr>`;
+        });
+      })
+      .withFailureHandler(err => {
+        cuerpo.innerHTML=`<tr><td colspan='8' style='text-align:center;color:var(--danger);padding:24px'>⚠️ Error: ${err&&err.message?err.message:err}</td></tr>`;
+      })
+      .obtenerEmpresas();
+  }
+
+  function filtrarTabla() {
+    const q=document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('#cuerpoTabla tr').forEach(r=>{
+      r.style.display=r.textContent.toLowerCase().includes(q)?'':'none';
+    });
+  }
+
+  // ── DETALLE ─────────────────────────────────────────────────
+  function verContrato(nit,contrato) {
+    showTab('detalle');
+    document.getElementById('detalleContainer').innerHTML='<div class="small">⏳ Cargando detalle...</div>';
+    google.script.run
+      .withSuccessHandler(det=>renderDetalle(det||{nit,contrato}))
+      .withFailureHandler(err=>{
+        document.getElementById('detalleContainer').innerHTML=`<div class="message error" style="display:block">${err&&err.message?err.message:err}</div>`;
+      })
+      .obtenerDetalleContrato(nit,contrato);
+  }
+
+  function renderDetalle(det) {
+    const c=document.getElementById('detalleContainer');
+    const s=k=>escapeHtml(det[k]||'');
+    c.innerHTML=`
+      <div class="detalle-header">
+        <h3>📄 Contrato ${s('contrato')} — ${s('nombre')}</h3>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary btn-sm" onclick="guardarDetalleContrato()">💾 Guardar</button>
+          <button class="btn btn-ghost btn-sm" onclick="showTab('consolidado')">← Volver</button>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>NIT</label><input id="d_nit" value="${s('nit')}" readonly></div>
+        <div class="form-group"><label>N° Contrato</label><input id="d_contrato" value="${s('contrato')}" readonly></div>
+        <div class="form-group" style="grid-column:1/-1"><label>Objeto del contrato</label><textarea id="d_objeto" rows="3">${s('objeto')}</textarea></div>
+        <div class="form-group"><label>Fecha inicial</label><input id="d_fechaInicial" type="date" value="${s('fechaInicial')}"></div>
+        <div class="form-group"><label>Fecha final</label><input id="d_fechaFinal" type="date" value="${s('fechaFinal')}"></div>
+        <div class="form-group"><label>Valor del contrato</label><input id="d_valor" value="${s('valor')}" placeholder="$"></div>
+        <div class="form-group"><label>Observaciones</label><input id="d_observaciones" value="${s('observaciones')}"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Cargar documento (PDF)</label>
+        <input id="d_file" type="file" accept="application/pdf">
+        <div id="uploadStatus" class="small" style="margin-top:6px;"></div>
+      </div>
+      <div class="form-group">
+        <label>Vista previa del documento</label>
+        <div class="file-preview" id="filePreview">
+          ${det.fileUrl
+            ?`<iframe src="${det.fileUrl}" width="100%" height="100%" style="border:0"></iframe>`
+            :`<div style="padding:20px;color:var(--muted);text-align:center;">📎 No hay documento. Cargue un PDF para verlo aquí.</div>`}
+        </div>
+      </div>`;
+  }
+
+  function guardarDetalleContrato() {
+    const nit=document.getElementById('d_nit').value;
+    const contrato=document.getElementById('d_contrato').value;
+    const detalle={
+      nit,contrato,
+      objeto:       document.getElementById('d_objeto').value,
+      fechaInicial: document.getElementById('d_fechaInicial').value,
+      fechaFinal:   document.getElementById('d_fechaFinal').value,
+      valor:        document.getElementById('d_valor').value,
+      observaciones:document.getElementById('d_observaciones').value
+    };
+    const fileInput=document.getElementById('d_file');
+    const status=document.getElementById('uploadStatus');
+    status.textContent='⏳ Guardando detalle...';
+    google.script.run
+      .withSuccessHandler(()=>{
+        if(fileInput&&fileInput.files&&fileInput.files.length>0){
+          const file=fileInput.files[0];
+          const reader=new FileReader();
+          reader.onload=e=>{
+            const b64=e.target.result.split(',')[1];
+            status.textContent='⏳ Subiendo archivo...';
+            google.script.run
+              .withSuccessHandler(info=>{
+                status.textContent='✅ Detalle y archivo guardados';
+                document.getElementById('filePreview').innerHTML=
+                  `<iframe src="${info.fileUrl}" width="100%" height="100%" style="border:0"></iframe>`;
+              })
+              .withFailureHandler(err=>{ status.textContent='❌ Error al subir: '+(err&&err.message?err.message:err); })
+              .subirContratoFile({nit,contrato,name:file.name,mimeType:file.type,base64:b64});
+          };
+          reader.readAsDataURL(file);
+        } else {
+          status.textContent='✅ Detalle guardado (sin archivo)';
+        }
+      })
+      .withFailureHandler(err=>{ status.textContent='❌ Error: '+(err&&err.message?err.message:err); })
+      .guardarDetalleContrato(detalle);
+  }
+
+  // ── PÓLIZAS ─────────────────────────────────────────────────
+  function cargarTiposPoliza() {
+    const sel=document.getElementById('filtroPoliza');
+    sel.innerHTML='<option>Cargando...</option>';
+    google.script.run
+      .withSuccessHandler(tipos=>{
+        if(!tipos||!tipos.length){ sel.innerHTML='<option value="">Sin tipos disponibles</option>'; return; }
+        sel.innerHTML='<option value="">— Tipo de póliza —</option>';
+        tipos.forEach(t=>{ sel.innerHTML+=`<option value="${t}">${t}</option>`; });
+        sel.selectedIndex=1; cargarPolizas();
+      })
+      .obtenerTiposPoliza();
+  }
+
+  function cargarPolizas() {
+    const tipo=document.getElementById('filtroPoliza').value;
+    const estadoFiltro=document.getElementById('filtroEstado').value;
+    const busqueda=(document.getElementById('buscadorPolizas').value||'').toLowerCase();
+    const tabla=document.getElementById('tablaPolizas');
+    if(!tipo){
+      tabla.innerHTML="<tr><td colspan='6' style='text-align:center;color:var(--muted);padding:24px'>Seleccione un tipo de póliza</td></tr>";
+      return;
+    }
+    tabla.innerHTML="<tr><td colspan='6' style='padding:24px;text-align:center'>⏳ Cargando...</td></tr>";
+    google.script.run
+      .withSuccessHandler(data=>{
+        if(!data||!data.length){
+          tabla.innerHTML="<tr><td colspan='6' style='text-align:center;color:var(--muted);padding:24px'>No hay pólizas para este tipo</td></tr>";
+          return;
+        }
+        let f=data;
+        if(estadoFiltro) f=f.filter(p=>String(p.estado||'').toLowerCase().trim()===estadoFiltro.toLowerCase());
+        if(busqueda) f=f.filter(p=>(p.entidad||'').toLowerCase().includes(busqueda)||(p.plan||'').toLowerCase().includes(busqueda)||(p.aseguradora||'').toLowerCase().includes(busqueda));
+        const pri=e=>{ e=(e||'').toLowerCase(); return e.includes('vencida')?1:e.includes('proxima')?2:e.includes('vigente')?3:4; };
+        f.sort((a,b)=>pri(a.estado)-pri(b.estado));
+        let v=0,pr=0,ve=0;
+        tabla.innerHTML='';
+        f.forEach(p=>{
+          const est=(p.estado||'').toLowerCase();
+          let cl='estado-na';
+          if(est.includes('vencida')){cl='estado-vencida';ve++;}
+          else if(est.includes('proxima')){cl='estado-proximo';pr++;}
+          else if(est.includes('vigente')){cl='estado-vigente';v++;}
+          tabla.innerHTML+=`<tr id="fila-${p.id}">
+            <td>${p.entidad||''}</td><td>${p.plan||''}</td><td>${p.aseguradora||''}</td>
+            <td><input type="date" value="${p.inicioRaw||''}" style="padding:6px 9px;font-size:.78rem;" onchange="actualizarFecha(${p.id},'inicio',this.value)"></td>
+            <td><input type="date" value="${p.finRaw||''}" style="padding:6px 9px;font-size:.78rem;" onchange="actualizarFecha(${p.id},'fin',this.value)"></td>
+            <td><span class="badge ${cl}">${p.estado||''}</span></td>
+          </tr>`;
+        });
+        document.getElementById('statVigentes').textContent=v;
+        document.getElementById('statProximas').textContent=pr;
+        document.getElementById('statVencidas').textContent=ve;
+        document.getElementById('resumenEstados').innerHTML=`
+          <div class="chip estado-vigente"><span class="chip-dot" style="background:#15803D"></span>Vigentes: ${v}</div>
+          <div class="chip estado-proximo"><span class="chip-dot" style="background:#B45309"></span>Próximas: ${pr}</div>
+          <div class="chip estado-vencida"><span class="chip-dot" style="background:#B91C1C"></span>Vencidas: ${ve}</div>`;
+      })
+      .withFailureHandler(err=>{
+        tabla.innerHTML=`<tr><td colspan='6' style='color:var(--danger);padding:24px'>⚠️ Error: ${err.message||err}</td></tr>`;
+      })
+      .obtenerPolizas(tipo);
+  }
+
+  function actualizarFecha(fila,campo,valor){
+    google.script.run
+      .withSuccessHandler(()=>{
+        google.script.run
+          .withSuccessHandler(p=>actualizarFilaHTML(p))
+          .obtenerPolizaPorFila(fila);
+      })
+      .actualizarFechaPoliza(fila,campo,valor);
+  }
+
+  function actualizarFilaHTML(p){
+    const est=(p.estado||'').toLowerCase();
+    let cl='estado-na';
+    if(est.includes('vencida'))cl='estado-vencida';
+    else if(est.includes('proxima'))cl='estado-proximo';
+    else if(est.includes('vigente'))cl='estado-vigente';
+    const html=`<tr id="fila-${p.id}">
+      <td>${p.entidad}</td><td>${p.plan}</td><td>${p.aseguradora}</td>
+      <td><input type="date" value="${p.inicioRaw||''}" style="padding:6px 9px;font-size:.78rem;" onchange="actualizarFecha(${p.id},'inicio',this.value)"></td>
+      <td><input type="date" value="${p.finRaw||''}" style="padding:6px 9px;font-size:.78rem;" onchange="actualizarFecha(${p.id},'fin',this.value)"></td>
+      <td><span class="badge ${cl}">${p.estado||''}</span></td>
+    </tr>`;
+    const dom=document.getElementById(`fila-${p.id}`);
+    if(dom) dom.outerHTML=html;
+  }
+
+  // ── CONTACTO ASEGURADORAS ───────────────────────────────────
+  const HOJAS_CONTACTO = ['EPS','PAP','FUERZA COMERCIAL','ARL','MOS','IPS TRASPLANTE'];
+  let _contactosData = [];
+  let _hojaActual   = 'EPS';
+
+  // Al entrar al tab: carga todos los conteos en paralelo y muestra EPS primero
+  function iniciarContactos() {
+    HOJAS_CONTACTO.forEach(h => {
+      google.script.run
+        .withSuccessHandler(data => {
+          const el = document.getElementById('cnt-' + h);
+          if (el) el.textContent = (data ? data.length : 0) + ' contactos';
+        })
+        .obtenerContactos(h);
+    });
+    seleccionarHoja('EPS', document.querySelector('.hoja-chip'));
+  }
+
+  function seleccionarHoja(nombreHoja, btn) {
+    _hojaActual = nombreHoja;
+
+    // Activar chip
+    document.querySelectorAll('.hoja-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    // Título
+    const etiquetas = {
+      'EPS':'EPS','PAP':'PAP','FUERZA COMERCIAL':'Fuerza Comercial',
+      'ARL':'ARL','MOS':'MOS','IPS TRASPLANTE':'IPS Trasplante'
+    };
+    document.getElementById('tituloContactos').textContent =
+      'Contactos — ' + (etiquetas[nombreHoja] || nombreHoja);
+    document.getElementById('buscadorContactos').value = '';
+
+    const cuerpo = document.getElementById('cuerpoContactos');
+    cuerpo.innerHTML="<tr><td colspan='6' style='text-align:center;color:var(--muted);padding:24px'>⏳ Cargando...</td></tr>";
+
+    google.script.run
+      .withSuccessHandler(data => {
+        _contactosData = data || [];
+        // Actualizar conteo en el chip
+        const el = document.getElementById('cnt-' + nombreHoja);
+        if (el) el.textContent = _contactosData.length + ' contactos';
+        renderContactos(_contactosData);
+      })
+      .withFailureHandler(err => {
+        cuerpo.innerHTML=`<tr><td colspan='6' style='color:var(--danger);padding:24px;text-align:center'>⚠️ Error: ${err&&err.message?err.message:err}</td></tr>`;
+      })
+      .obtenerContactos(nombreHoja);
+  }
+
+  function renderContactos(data) {
+    const cuerpo = document.getElementById('cuerpoContactos');
+    if (!data || !data.length) {
+      cuerpo.innerHTML="<tr><td colspan='6' style='text-align:center;color:var(--muted);padding:24px'>No hay contactos registrados en esta hoja.</td></tr>";
+      return;
+    }
+    cuerpo.innerHTML = '';
+    data.forEach(c => {
+      cuerpo.innerHTML += `<tr>
+        <td><strong>${escapeHtml(c.empresa)}</strong></td>
+        <td>${escapeHtml(c.nombre)}</td>
+        <td><span style="font-size:.75rem;color:var(--muted)">${escapeHtml(c.cargo)}</span></td>
+        <td>${c.telefono ? `<a href="tel:${escapeHtml(c.telefono)}" style="color:var(--accent);font-weight:600;text-decoration:none;">📱 ${escapeHtml(c.telefono)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td>${c.correo ? `<a href="mailto:${escapeHtml(c.correo)}" style="color:var(--accent);font-weight:600;text-decoration:none;font-size:.80rem;">✉️ ${escapeHtml(c.correo)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+        <td><span style="font-size:.80rem">${escapeHtml(c.direccion)||'<span style="color:var(--muted)">—</span>'}</span></td>
+      </tr>`;
+    });
+  }
+
+  function filtrarContactos() {
+    const q = document.getElementById('buscadorContactos').value.toLowerCase();
+    if (!q) { renderContactos(_contactosData); return; }
+    const filtrado = _contactosData.filter(c =>
+      (c.empresa||'').toLowerCase().includes(q) ||
+      (c.nombre||'').toLowerCase().includes(q)  ||
+      (c.cargo||'').toLowerCase().includes(q)   ||
+      (c.correo||'').toLowerCase().includes(q)
+    );
+    renderContactos(filtrado);
+  }
+
+  // ── UTILIDADES ──────────────────────────────────────────────
+  function escapeHtml(s) {
+    if (!s && s!==0) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => showTab('contratos'));
+</script>
+</body>
+</html>
